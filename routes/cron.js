@@ -1,16 +1,16 @@
 const cron = require('node-cron');
 const userModel = require('../models/user');
 
-const membershipExpiryTask = cron.schedule('0 0 0 * * *', () => {
-        membershipExpiry();
-        membershipExpiryTask.stop();
-})
-
 function membershipExpiry() {
-    try{
-        userModel.updateMany({expiry : Date.now()}, {isPremium : false})
-        console.log("EXECUTED")
-    }catch(err){
-        console.log("CRON ERROR---->>>",err)
-    }
+  try {
+    userModel.updateMany({ expiry: Date.now() }, { isPremium: false });
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.log('CRON ERROR---->>>', err);
+  }
 }
+
+const membershipExpiryTask = cron.schedule('0 0 0 * * *', () => {
+  membershipExpiry();
+  membershipExpiryTask.stop();
+});

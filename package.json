@@ -4,7 +4,7 @@
   "description": "Backend for TechnoQuizz App",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "node index.js",
     "test": "mocha || true"
   },
   "repository": {
@@ -22,7 +22,6 @@
     "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
     "dotenv": "^10.0.0",
-    "eslint": "^7.27.0",
     "express": "^4.17.1",
     "joi": "^17.4.0",
     "jsonwebtoken": "^8.5.1",
@@ -33,6 +32,9 @@
   },
   "devDependencies": {
     "chai": "^4.3.4",
+    "eslint": "^7.27.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.23.4",
     "mocha": "^8.4.0",
     "nodemon": "^2.0.7"
   }
