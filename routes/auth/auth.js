@@ -28,10 +28,13 @@ router.post('/register',async (req,res) => {
     }
 });
 
-router.post('/login', async (req,res)=>{
-    const { error } = loginValidation(req.body);
-    if(error) return res.status(400).send(error.details[0].message);
 
+
+//add messages here for login,registeration
+// eslint-disable-next-line consistent-return
+router.post('/login', async (req, res) => {
+  const { error } = loginValidation(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
     const user = await User.findOne({email:req.body.email});
     if(!user) return res.status(400).send('Incorrect email/password'); 
 
@@ -42,7 +45,4 @@ router.post('/login', async (req,res)=>{
     const data = {username : user.name, isPremium : user.isPremium, score : user.score}
     res.header('auth-token',token).send(token);
 })
-
-
-
 module.exports = router;
