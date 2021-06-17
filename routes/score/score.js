@@ -21,7 +21,7 @@ router.post('/', verifyUser, async (req, res) => {
       $inc: { score: req.body.score },
       $push: { quizLog: sessionData },
     }, { upsert: true });
-    res.status(200).send('Score Updated');
+    res.status(200).send({ message: 'Score Updated' });
   } catch (err) {
     res.status(400).send(err);
   }

@@ -12,8 +12,9 @@ router.post('/register', async (req, res) => {
   if (error) return res.status(400).send(error.details[0].message);
 
   const emailExist = await User.findOne({ email: req.body.email });
-  if (emailExist) return res.status(400).send('Email already exists');
+  if (emailExist) return res.status(400).send({ message: 'Email already exists' });
 
+  // Generate password hash
   const salt = await bcrypt.genSalt(10);
   const hashPassword = await bcrypt.hash(req.body.password, salt);
 
@@ -22,27 +23,34 @@ router.post('/register', async (req, res) => {
     email: req.body.email,
     password: hashPassword,
   });
+
   try {
     await user.save();
-    res.send({ user: user._id });
+    res.send({ user: user._id, message: 'Register Successful' });
   } catch (err) {
     res.status(400).send(err);
   }
 });
 
-// eslint-disable-next-line consistent-return
 router.post('/login', async (req, res) => {
   const { error } = loginValidation(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
   const user = await User.findOne({ email: req.body.email });
-  if (!user) return res.status(400).send('Incorrect email/password');
+  if (!user) return res.status(400).send({ message: 'Incorrect email/password' });
 
   const validPass = await bcrypt.compare(req.body.password, user.password);
-  if (!validPass) return res.status(400).send('Incorrect password/email');
+  if (!validPass) return res.status(400).send({ message: 'Incorrect password/email' });
 
   const token = jwt.sign({ id: user._id }, process.env.AUTH_TOKEN_SECRET);
-  res.header('Auth-Token', token).send(token);
+  const data = {
+    username: user.name,
+    isPremium: user.isPremium,
+    score: user.score,
+    authtoken: token,
+    message: 'Login Successful',
+  };
+  res.send(data);
 });
 
 module.exports = router;

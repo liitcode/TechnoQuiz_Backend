@@ -30,7 +30,7 @@ app.use('/api/quiz', quiz);
 app.use('/api/score', score);
 app.use('/api/pay', payment);
 app.get('/', (req, res) => {
-  res.status(200).send('TechnoQuiz Backend');
+  res.status(200).send('Server Health @ 100%');
 });
-const port = process.env.port || 3000;
+const port = process.env.port || 8000;
 app.listen(port);

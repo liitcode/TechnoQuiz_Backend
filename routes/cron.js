@@ -3,7 +3,7 @@ const userModel = require('../models/user');
 
 function membershipExpiry() {
   try {
-    userModel.updateMany({ expiry: Date.now() }, { isPremium: false });
+    userModel.updateMany({ expiry: new Date().toJSON().replace(/-/g, '/') }, { isPremium: false });
   } catch (err) {
     // eslint-disable-next-line no-console
     console.log('CRON ERROR---->>>', err);

@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 const router = require('express').Router();
 const axios = require('axios');
 const category = require('../categories/category_map');
@@ -5,7 +6,6 @@ const verifyUser = require('../auth/verifyToken');
 const difficulty = require('./difficulty_map');
 const validateReq = require('./validation');
 
-// eslint-disable-next-line consistent-return
 router.post('/', verifyUser, async (req, res) => {
   const { error } = validateReq(req.body);
   if (error) return res.status(400).send(error.details[0].message);
@@ -24,14 +24,13 @@ router.post('/', verifyUser, async (req, res) => {
           id: resp.id,
           question: resp.question,
           answers: resp.answers,
-          correct: resp.correct_answer,
+          correct: resp.correct_answers,
         })),
       };
       res.status(200).send(result);
     })
-    // eslint-disable-next-line no-shadow
-    .catch((error) => {
-      res.status(400).send(error);
+    .catch((err) => {
+      res.status(400).send(err);
     });
 });
 

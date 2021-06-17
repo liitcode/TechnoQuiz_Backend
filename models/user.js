@@ -17,8 +17,8 @@ const userSchema = new mongo.Schema({
     max: 1024,
   },
   date: {
-    type: Date,
-    default: Date.now,
+    type: String,
+    default: new Date().toJSON().replace(/-/g, '/'),
   },
   score: {
     type: Number,

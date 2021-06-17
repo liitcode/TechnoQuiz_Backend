@@ -1,7 +1,8 @@
 const router = require('express').Router();
 const Razorpay = require('razorpay');
 const { nanoid } = require('nanoid');
-const orderDetails = require('../../models/order');
+const crypto = require('crypto');
+const OrderDetails = require('../../models/order');
 const userDetails = require('../../models/user');
 const verifyUser = require('../auth/verifyToken');
 
@@ -18,8 +19,7 @@ router.post('/order', verifyUser, (req, res) => {
     payment_capture: '1',
   };
   razorPayInstance.orders.create(params).then(async (response) => {
-    // eslint-disable-next-line new-cap
-    const order = new orderDetails({
+    const order = new OrderDetails({
       orderId: response.id,
       receiptId: response.receipt,
       amount: response.amount,
@@ -40,16 +40,14 @@ router.post('/order', verifyUser, (req, res) => {
 });
 
 router.post('/verify', verifyUser, async (req, res) => {
-  // eslint-disable-next-line prefer-template
-  const body = req.body.razorpay_order_id + '|' + req.body.razorpay_payment_id;
-  // eslint-disable-next-line global-require
-  const crypto = require('crypto');
+  const body = `${req.body.razorpay_order_id}|${req.body.razorpay_payment_id}`;
+
   const expectedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
     .update(body.toString())
     .digest('hex');
 
   if (expectedSignature === req.body.razorpay_signature) {
-    await orderDetails.findOneAndUpdate(
+    await OrderDetails.findOneAndUpdate(
       { orderId: req.body.razorpay_order_id },
       {
         paymentId: req.body.razorpay_payment_id,
@@ -60,7 +58,7 @@ router.post('/verify', verifyUser, async (req, res) => {
         if (err) res.status(400).send(err);
         const days = (req.body.plan === 'M' ? 30 : 365);
         await userDetails.findOneAndUpdate({ _id: req.user.id },
-          { expiry: new Date(new Date().setDate(new Date().getDate() - days)) });
+          { expiry: new Date(new Date().setDate(new Date().getDate() - days).toJSON().replace(/-/g, '/')) });
         res.status(200).send(details);
       },
     );
