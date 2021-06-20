@@ -1,6 +1,6 @@
 /* eslint-disable consistent-return */
 const router = require('express').Router();
-const category = require('../categories/category_map');
+const { categoryMap } = require('../categories/category_map');
 const verifyUser = require('../auth/verifyToken');
 const difficulty = require('../quiz/difficulty_map');
 const validateScore = require('./validation');
@@ -11,7 +11,7 @@ router.post('/', verifyUser, async (req, res) => {
   if (error) return res.status(400).send(error.details[0].message);
   const sessionData = {
     attemptDate: new Date().toJSON().replace(/-/g, '/'),
-    category: category[req.body.category],
+    category: categoryMap[req.body.category],
     difficulty: difficulty[req.body.difficulty],
     scored: req.body.score,
   };

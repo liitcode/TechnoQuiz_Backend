@@ -1,8 +1,8 @@
 const router = require('express').Router();
-const category = require('./category_map');
+const { categoryData } = require('./category_map');
 
 router.get('/', (req, res) => {
-  res.status(200).send(category);
+  res.status(200).send(categoryData);
 });
 
 module.exports = router;

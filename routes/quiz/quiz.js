@@ -1,7 +1,7 @@
 /* eslint-disable consistent-return */
 const router = require('express').Router();
 const axios = require('axios');
-const category = require('../categories/category_map');
+const { categoryMap } = require('../categories/category_map');
 const verifyUser = require('../auth/verifyToken');
 const difficulty = require('./difficulty_map');
 const validateReq = require('./validation');
@@ -9,7 +9,7 @@ const validateReq = require('./validation');
 router.post('/', verifyUser, async (req, res) => {
   const { error } = validateReq(req.body);
   if (error) return res.status(400).send(error.details[0].message);
-  const apiUrl = `${process.env.QAPI_BASE + category[req.body.category]}&difficulty=${difficulty[req.body.difficulty]}&limit=10`;
+  const apiUrl = `${process.env.QAPI_BASE + categoryMap[req.body.category]}&difficulty=${difficulty[req.body.difficulty]}&limit=10`;
   const data = {
     method: 'get',
     url: apiUrl,

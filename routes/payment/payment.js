@@ -39,31 +39,35 @@ router.post('/order', verifyUser, (req, res) => {
   });
 });
 
-router.post('/verify', verifyUser, async (req, res) => {
-  const body = `${req.body.razorpay_order_id}|${req.body.razorpay_payment_id}`;
-
-  const expectedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
-    .update(body.toString())
+router.post('/verify', async (req, res) => {
+  const body = req.body.payload.payment.entity;
+  const secret = 'technoquiz';
+  const signature = req.headers['x-razorpay-signature'];
+  const expectedSignature = crypto.createHmac('sha256', secret)
+    .update(JSON.stringify(req.body))
     .digest('hex');
-
-  if (expectedSignature === req.body.razorpay_signature) {
+  const uId = await OrderDetails.findOne({ orderId: body.order_id }, 'userID');
+  if (expectedSignature === signature) {
     await OrderDetails.findOneAndUpdate(
-      { orderId: req.body.razorpay_order_id },
+      { orderId: body.order_id },
       {
-        paymentId: req.body.razorpay_payment_id,
-        signature: req.body.razorpay_signature,
+        paymentId: body.id,
+        signature,
         status: 'paid',
       }, { new: true },
       async (err, details) => {
         if (err) res.status(400).send(err);
         const days = (req.body.plan === 'M' ? 30 : 365);
-        await userDetails.findOneAndUpdate({ _id: req.user.id },
-          { expiry: new Date(new Date().setDate(new Date().getDate() - days).toJSON().replace(/-/g, '/')) });
-        res.status(200).send(details);
+        await userDetails.findOneAndUpdate({ _id: details.userID },
+          {
+            expiry: new Date(new Date().setDate(new Date().getDate() - days)),
+            isPremium: true,
+          }, { new: true });
+        res.status(200).send('ok');
       },
     );
   } else {
-    await userDetails.findOneAndUpdate({ _id: req.user.id }, { status: 'failed' }, { new: true });
+    await userDetails.findOneAndUpdate({ _id: uId }, { status: 'failed' }, { new: true });
     res.status(205).send('Payment Failed');
   }
 });
