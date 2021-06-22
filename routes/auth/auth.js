@@ -47,6 +47,7 @@ router.post('/login', async (req, res) => {
     username: user.name,
     isPremium: user.isPremium,
     score: user.score,
+    expiry: user.expiry,
     authtoken: token,
     message: 'Login Successful',
   };

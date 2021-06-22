@@ -1,9 +1,10 @@
 const cron = require('node-cron');
+const { DateTime } = require('luxon');
 const userModel = require('../models/user');
 
 function membershipExpiry() {
   try {
-    userModel.updateMany({ expiry: new Date().toJSON().replace(/-/g, '/') }, { isPremium: false });
+    userModel.updateMany({ expiry: DateTime.now().toISODate() }, { isPremium: false });
   } catch (err) {
     // eslint-disable-next-line no-console
     console.log('CRON ERROR---->>>', err);

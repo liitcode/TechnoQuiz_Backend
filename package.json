@@ -4,7 +4,7 @@
   "description": "Backend for TechnoQuizz App",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "nodemon index.js",
     "test": "mocha || true"
   },
   "repository": {
@@ -25,6 +25,7 @@
     "express": "^4.17.1",
     "joi": "^17.4.0",
     "jsonwebtoken": "^8.5.1",
+    "luxon": "^1.27.0",
     "mongoose": "^5.12.11",
     "nanoid": "^3.1.23",
     "node-cron": "^3.0.0",

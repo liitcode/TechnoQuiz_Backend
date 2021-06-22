@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable consistent-return */
 const router = require('express').Router();
 const axios = require('axios');
@@ -7,6 +8,15 @@ const difficulty = require('./difficulty_map');
 const validateReq = require('./validation');
 
 router.post('/', verifyUser, async (req, res) => {
+  const encrypt = (data, salt) => {
+    let o = data;
+    o = JSON.stringify(o).split('');
+    for (let i = 0, l = o.length; i < l; i += 1) {
+      if (o[i] === '{') o[i] = '}';
+      else if (o[i] === '}') o[i] = '{';
+    }
+    return encodeURI(salt + o.join(''));
+  };
   const { error } = validateReq(req.body);
   if (error) return res.status(400).send(error.details[0].message);
   const apiUrl = `${process.env.QAPI_BASE + categoryMap[req.body.category]}&difficulty=${difficulty[req.body.difficulty]}&limit=10`;
@@ -27,9 +37,11 @@ router.post('/', verifyUser, async (req, res) => {
           correct: resp.correct_answers,
         })),
       };
-      res.status(200).send(result);
+      const encryptedData = encrypt(result, process.env.SALT);
+      res.status(200).send(encryptedData);
     })
     .catch((err) => {
+      console.log('ooopss', err);
       res.status(400).send(err);
     });
 });

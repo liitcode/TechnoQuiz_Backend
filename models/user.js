@@ -1,4 +1,5 @@
 const mongo = require('mongoose');
+const { DateTime } = require('luxon');
 
 const userSchema = new mongo.Schema({
   name: {
@@ -17,8 +18,8 @@ const userSchema = new mongo.Schema({
     max: 1024,
   },
   date: {
-    type: String,
-    default: new Date().toJSON().replace(/-/g, '/'),
+    type: Date,
+    default: DateTime.now().toISODate(),
   },
   score: {
     type: Number,

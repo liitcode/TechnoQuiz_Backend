@@ -2,6 +2,7 @@ const router = require('express').Router();
 const Razorpay = require('razorpay');
 const { nanoid } = require('nanoid');
 const crypto = require('crypto');
+const { DateTime } = require('luxon');
 const OrderDetails = require('../../models/order');
 const userDetails = require('../../models/user');
 const verifyUser = require('../auth/verifyToken');
@@ -57,13 +58,13 @@ router.post('/verify', async (req, res) => {
       }, { new: true },
       async (err, details) => {
         if (err) res.status(400).send(err);
-        const days = (req.body.plan === 'M' ? 30 : 365);
+        const months = (body.amount === 45000 ? 1 : 12);
         await userDetails.findOneAndUpdate({ _id: details.userID },
           {
-            expiry: new Date(new Date().setDate(new Date().getDate() - days)),
+            expiry: DateTime.now().plus({ months }).toISODate(),
             isPremium: true,
           }, { new: true });
-        res.status(200).send('ok');
+        res.status(200).send('OK');
       },
     );
   } else {
