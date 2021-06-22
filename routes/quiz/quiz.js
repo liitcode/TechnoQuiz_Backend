@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-/* eslint-disable consistent-return */
 const router = require('express').Router();
 const axios = require('axios');
 const { categoryMap } = require('../categories/category_map');
@@ -7,15 +5,16 @@ const verifyUser = require('../auth/verifyToken');
 const difficulty = require('./difficulty_map');
 const validateReq = require('./validation');
 
+// eslint-disable-next-line consistent-return
 router.post('/', verifyUser, async (req, res) => {
-  const encrypt = (data, salt) => {
+  const encrypt = (data) => {
     let o = data;
     o = JSON.stringify(o).split('');
     for (let i = 0, l = o.length; i < l; i += 1) {
       if (o[i] === '{') o[i] = '}';
       else if (o[i] === '}') o[i] = '{';
     }
-    return encodeURI(salt + o.join(''));
+    return encodeURI(process.env.ENCRYPTION_SALT + o.join(''));
   };
   const { error } = validateReq(req.body);
   if (error) return res.status(400).send(error.details[0].message);
@@ -37,11 +36,10 @@ router.post('/', verifyUser, async (req, res) => {
           correct: resp.correct_answers,
         })),
       };
-      const encryptedData = encrypt(result, process.env.SALT);
+      const encryptedData = encrypt(result);
       res.status(200).send(encryptedData);
     })
     .catch((err) => {
-      console.log('ooopss', err);
       res.status(400).send(err);
     });
 });
