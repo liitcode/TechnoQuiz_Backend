@@ -40,6 +40,7 @@ router.post('/', verifyUser, async (req, res) => {
       res.status(200).send(encryptedData);
     })
     .catch((err) => {
+      console.log('ooopss', err);
       res.status(400).send(err);
     });
 });
