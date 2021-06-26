@@ -12,6 +12,7 @@ const categoryMap = {
   111: 'Laravel',
 };
 
+// Static Content for category page
 const categoryData = [
   {
     id: 101,

@@ -1,6 +1,7 @@
 /* eslint-disable consistent-return */
 const jwt = require('jsonwebtoken');
 
+// JWT Auth Verification Middleware
 module.exports = (req, res, next) => {
   const token = req.header('Auth-Token');
   if (!token) return res.status(401).send({ message: 'Access Denied' });

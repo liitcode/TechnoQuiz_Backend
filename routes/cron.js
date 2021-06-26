@@ -2,6 +2,7 @@ const cron = require('node-cron');
 const { DateTime } = require('luxon');
 const userModel = require('../models/user');
 
+// CRON service to update user scores daily
 function membershipExpiry() {
   try {
     userModel.updateMany({ expiry: DateTime.now().toISODate() }, { isPremium: false });

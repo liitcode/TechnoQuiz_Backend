@@ -7,11 +7,13 @@ const OrderDetails = require('../../models/order');
 const userDetails = require('../../models/user');
 const verifyUser = require('../auth/verifyToken');
 
+// Initialize Razorpay
 const razorPayInstance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
+// Create Order with Razorpay and store to DB
 router.post('/order', verifyUser, (req, res) => {
   const params = {
     amount: req.body.amount * 100,
@@ -40,6 +42,7 @@ router.post('/order', verifyUser, (req, res) => {
   });
 });
 
+// Verification Script for Incoming Webhook from Razorpay
 router.post('/verify', async (req, res) => {
   const body = req.body.payload.payment.entity;
   const secret = 'technoquiz';
@@ -58,6 +61,7 @@ router.post('/verify', async (req, res) => {
       }, { new: true },
       async (err, details) => {
         if (err) res.status(400).send(err);
+        // Set Subscription Plan based on fixed amount
         const months = (body.amount === 45000 ? 1 : 12);
         await userDetails.findOneAndUpdate({ _id: details.userID },
           {
