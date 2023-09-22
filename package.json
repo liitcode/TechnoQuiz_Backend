@@ -28,7 +28,7 @@
     "joi": "^17.4.0",
     "jsonwebtoken": "^8.5.1",
     "luxon": "^1.27.0",
-    "mongoose": "^5.12.11",
+    "mongoose": "^5.13.20",
     "nanoid": "^3.1.23",
     "node-cron": "^3.0.0",
     "razorpay": "^2.0.6"
